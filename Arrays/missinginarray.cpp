@@ -1,3 +1,4 @@
+
 #include<iostream>
 using namespace std;
 int missingNum(int *arr, int size) {
