@@ -6,61 +6,58 @@ using namespace std;
 
 /*
  * PROBLEM: Sort Colors (LeetCode 75)
- * * PATTERN: Three Pointers / Dutch National Flag Algorithm
- *
- * STATEMENT:
- * Given an array 'nums' with n objects colored red, white, or blue, 
- * sort them in-place so that objects of the same color are adjacent, 
- * with the colors in the order red, white, and blue.
+ * PATTERN: Dutch National Flag Algorithm (1-Pass, 3 Pointers)
  * 
- * We will use integers 0, 1, and 2 to represent the colors red, white, and blue respectively.
- * You must solve this problem WITHOUT using the library's sort function.
- *
- * GOAL:
- * Achieve O(N) Time Complexity and O(1) Space Complexity in a single pass!
- *
- * HINT FOR THREE POINTERS:
- * - 'low' tracks the boundary where 0s should go (starts at index 0).
- * - 'mid' scans through the array from left to right (starts at index 0).
- * - 'high' tracks the boundary where 2s should go (starts at last index).
- *
- * RULES AS 'mid' MOVES:
- * 1. If nums[mid] == 0: swap(nums[low], nums[mid]), then low++, mid++
- * 2. If nums[mid] == 1: just mid++
- * 3. If nums[mid] == 2: swap(nums[mid], nums[high]), then high-- (do NOT increment mid here!)
+ * POINTER INVARIANTS:
+ * - [0 ... low - 1]   : All 0s
+ * - [low ... mid - 1] : All 1s
+ * - [mid ... high]    : Unexamined elements (unknown)
+ * - [high + 1 ... N-1]: All 2s
+ * 
+ * TIME COMPLEXITY: O(N) - Single pass through the array.
+ * SPACE COMPLEXITY: O(1) - Constant space in-place swaps.
  */
 
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
-        // TODO: Write your solution logic here!
         int low = 0;
         int mid = 0;
         int high = nums.size() - 1;
 
         while (mid <= high) {
-            // Your logic goes here
+            if (nums[mid] == 0) {
+                // Case 1: Found a 0 -> Swap with low, then advance low and mid
+                swap(nums[low], nums[mid]);
+                low++;
+                mid++;
+            } 
+            else if (nums[mid] == 1) {
+                // Case 2: Found a 1 -> 1s stay in the middle, just advance mid
+                mid++;
+            } 
+            else {
+                // Case 3: Found a 2 -> Swap with high, shrink high boundary
+                // Note: Do NOT increment mid here because the newly swapped 
+                // element from 'high' hasn't been checked yet!
+                swap(nums[mid], nums[high]);
+                high--;
+            }
         }
     }
 };
 
-// Main function for local VS Code testing
 int main() {
     Solution sol;
+    vector<int> test = {2, 0, 2, 1, 1, 0};
     
-    vector<int> test1 = {2, 0, 2, 1, 1, 0};
-    cout << "Before sort: 2 0 2 1 1 0\n";
-    sol.sortColors(test1);
-    cout << "After sort:  ";
-    for (int num : test1) cout << num << " ";
-    cout << "\n(Expected:   0 0 1 1 2 2)\n\n";
-
-    vector<int> test2 = {2, 0, 1};
-    cout << "Before sort: 2 0 1\n";
-    sol.sortColors(test2);
-    cout << "After sort:  ";
-    for (int num : test2) cout << num << " ";
-    cout << "\n(Expected:   0 1 2)\n";
-
+    sol.sortColors(test);
+    
+    cout << "Sorted Array: ";
+    for (int num : test) {
+        cout << num << " ";
+    }
+    cout << "\nExpected:     0 0 1 1 2 2" << endl;
+    
     return 0;
 }
